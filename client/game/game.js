@@ -45,7 +45,7 @@ Template.game.onRendered(function () {
 
   var self = this;
   var board;
-  var snakeArray;
+  var snakeParts;
 
   this.autorun(function () {
     if (self.subscriptionsReady()) {
@@ -57,7 +57,7 @@ Template.game.onRendered(function () {
 
     board = self.find('canvas').getContext('2d');
     d = "right";
-    createSnake();
+    snakeParts = Players.findOne(Session.get('currentPlayer')).snakeParts;
     createFood();
 
     Session.set('score', 0);
@@ -69,10 +69,10 @@ Template.game.onRendered(function () {
 
   function createSnake () {
     var length = 5; // length of snake
-    snakeArray = []; // empty array to start with
+    snakeParts = []; // empty array to start with
     for (var i = length - 1; i >= 0; i--) {
       // create a horizontal snake starting from the top left
-      snakeArray.push({ x: i, y: 0 });
+      snakeParts.push({ x: i, y: 0 });
     }
   }
 
@@ -88,6 +88,7 @@ Template.game.onRendered(function () {
   function paint() {
 
     console.log("d=", d);
+    debugger;
 
     // avoid the snake trail we need to paint the BG on every frame
     // lets paint the cnavs now
@@ -99,8 +100,8 @@ Template.game.onRendered(function () {
     // movement code for the snake to come here
     // logic is simple
     // pop out the tail cell and place it in front of the head cell
-    var nx = snakeArray[0].x;
-    var ny = snakeArray[0].y;
+    var nx = snakeParts[0].x;
+    var ny = snakeParts[0].y;
 
     // these were the position of the head cell
     // increment it to get the new head position
@@ -115,7 +116,7 @@ Template.game.onRendered(function () {
     // add the code for body collision
     // if the head of the snake bumps into its body, game restarts
     if (nx == -1 || nx == MAX_WIDTH / CELL_WIDTH || ny == -1 || ny == MAX_HEIGHT / CELL_WIDTH ||
-      checkCollision(nx, ny, snakeArray)) {
+      checkCollision(nx, ny, snakeParts)) {
       // restart game
       init();
 
@@ -138,15 +139,15 @@ Template.game.onRendered(function () {
       createFood();
     }
     else {
-      tail = snakeArray.pop(); // pops out the last cell
+      tail = snakeParts.pop(); // pops out the last cell
       tail.x = nx;
       tail.y = ny;
     }
 
     // snake can eat the food
-    snakeArray.unshift(tail); // puts the tail as the first cell
+    snakeParts.unshift(tail); // puts the tail as the first cell
 
-    _.each(Players.findOne(Session.get('currentPlayer')).snakeParts, function (snakePart) {
+    _.each(snakeParts, function (snakePart) {
       // paint 10px wide cells
       paintCell(snakePart.x, snakePart.y);
     });
