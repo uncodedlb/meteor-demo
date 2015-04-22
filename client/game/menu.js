@@ -1,3 +1,5 @@
+// Check for Session uuid to identify each client
+
 Template.menu.onCreated(function () {
   Session.set('menuSubmitErrors', {});
 });
@@ -26,7 +28,7 @@ Template.menu.events({
 
     // create new player and take them to the game!
     Players.insert(player, function (err, _id) {
-      Session.set('player', player);
+      Session.set('currentPlayer', _id);
       Router.go('game');
     });
 

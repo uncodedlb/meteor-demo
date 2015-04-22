@@ -1,5 +1,6 @@
 
-var cw = 10;
+
+
 var d;
 var food;
 var score;
@@ -15,7 +16,7 @@ Template.game.helpers({
 Template.game.onCreated(function () {
 
   // make sure we always have a player
-  if (!_.isObject(Session.get('player'))) {
+  if (! Session.get('currentPlayer')) {
     Router.go('menu');
     return;
   }
@@ -37,16 +38,13 @@ Template.game.onCreated(function () {
 
 Template.game.onDestroyed(function () {
   $(document).off('.game');
-  Meteor.call('removePlayer', Session.get('player'));
+  Meteor.call('removePlayer', Session.get('currentPlayer'));
 });
 
 Template.game.onRendered(function () {
 
   var self = this;
   var board;
-  var ctx;
-  var w;
-  var h;
   var snakeArray;
 
   this.autorun(function () {
@@ -57,10 +55,7 @@ Template.game.onRendered(function () {
 
   function init() {
 
-    board = self.find('canvas');
-    ctx = board.getContext('2d');
-    w = board.width;
-    h = board.height;
+    board = self.find('canvas').getContext('2d');
     d = "right";
     createSnake();
     createFood();
@@ -85,18 +80,21 @@ Template.game.onRendered(function () {
     // creates a cell with x,y between 0-44
     // there are 45(450/10) positions accross the rows and columns
     food = {
-      x: Math.round(Math.random() * (w - cw) / cw),
-      y: Math.round(Math.random() * (h - cw) / cw)
+      x: Math.round(Math.random() * (MAX_WIDTH - CELL_WIDTH) / CELL_WIDTH),
+      y: Math.round(Math.random() * (MAX_HEIGHT - CELL_WIDTH) / CELL_WIDTH)
     };
   }
 
   function paint() {
+
+    console.log("d=", d);
+
     // avoid the snake trail we need to paint the BG on every frame
     // lets paint the cnavs now
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, w, h);
-    ctx.strokeStyle = "black";
-    ctx.strokeRect(0, 0, w, h);
+    board.fillStyle = "white";
+    board.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
+    board.strokeStyle = "black";
+    board.strokeRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
 
     // movement code for the snake to come here
     // logic is simple
@@ -116,7 +114,7 @@ Template.game.onRendered(function () {
     // this will restart the game if the snake hits something
     // add the code for body collision
     // if the head of the snake bumps into its body, game restarts
-    if (nx == -1 || nx == w / cw || ny == -1 || ny == h / cw ||
+    if (nx == -1 || nx == MAX_WIDTH / CELL_WIDTH || ny == -1 || ny == MAX_HEIGHT / CELL_WIDTH ||
       checkCollision(nx, ny, snakeArray)) {
       // restart game
       init();
@@ -134,7 +132,7 @@ Template.game.onRendered(function () {
         x: nx,
         y: ny
       };
-      Session.set('score', Session.get('score') + 1);
+      Players.update(Session.get('currentPlayer'), { score: { $inc: 1 } });
 
       // create more food!
       createFood();
@@ -148,13 +146,13 @@ Template.game.onRendered(function () {
     // snake can eat the food
     snakeArray.unshift(tail); // puts the tail as the first cell
 
-    _.each(snakeArray, function (snakePart) {
+    _.each(Players.findOne(Session.get('currentPlayer')).snakeParts, function (snakePart) {
       // paint 10px wide cells
       paintCell(snakePart.x, snakePart.y);
     });
 
     // render the other players
-    _.each(Players.find({ _id: { $not: { _id: Session.get('player')._id } } }).fetch(), function (player) {
+    _.each(Players.find({ _id: { $ne: Session.get('currentPlayer') } }).fetch(), function (player) {
       // the score represents how long of a snake a user can have
       _.each(player.snakeParts, function (snakePart) {
         paintCell(snakePart.x, snakePart.y);
@@ -166,10 +164,10 @@ Template.game.onRendered(function () {
   }
 
   function paintCell(x, y) {
-    ctx.fillStyle = "blue";
-    ctx.fillRect(x * cw, y * cw, cw, cw);
-    ctx.strokeText = "white";
-    ctx.strokeRect(x * cw, y * cw, cw, cw);
+    board.fillStyle = "blue";
+    board.fillRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
+    board.strokeText = "white";
+    board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
   }
 
   function checkCollision(x, y, array) {
