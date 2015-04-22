@@ -24,8 +24,10 @@ Template.menu.events({
     if (_.any(errors))
       return Session.set('menuSubmitErrors', errors);
 
-    Meteor.call('createPlayer', player, function () {
-      // TODO set the user session and start playing!
+    // create new player and take them to the game!
+    Players.insert(player, function (err, _id) {
+      Session.set('player', player);
+      Router.go('game');
     });
 
     return false;

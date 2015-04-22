@@ -4,17 +4,23 @@ var d;
 var food;
 var score;
 var gameLoop;
+var snakes;
 
-Template.board.helpers({
+Template.game.helpers({
   score: function () {
     return Session.get('score') || 0;
   }
 });
 
-Template.board.onCreated(function () {
-  var self = this;
+Template.game.onCreated(function () {
 
-  self.subscribe('players');
+  // make sure we always have a player
+  if (!_.isObject(Session.get('player'))) {
+    Router.go('menu');
+    return;
+  }
+
+  this.subscribe('players');
 
   // add the keyboard controls
   $(document).on('keydown.game', function (e) {
@@ -29,11 +35,12 @@ Template.board.onCreated(function () {
   });
 });
 
-Template.board.onDestroyed(function () {
+Template.game.onDestroyed(function () {
   $(document).off('.game');
+  Meteor.call('removePlayer', Session.get('player'));
 });
 
-Template.board.onRendered(function () {
+Template.game.onRendered(function () {
 
   var self = this;
   var board;
@@ -65,7 +72,7 @@ Template.board.onRendered(function () {
 
   }
 
-  function createSnake() {
+  function createSnake () {
     var length = 5; // length of snake
     snakeArray = []; // empty array to start with
     for (var i = length - 1; i >= 0; i--) {
@@ -144,6 +151,14 @@ Template.board.onRendered(function () {
     _.each(snakeArray, function (snakePart) {
       // paint 10px wide cells
       paintCell(snakePart.x, snakePart.y);
+    });
+
+    // render the other players
+    _.each(Players.find({ _id: { $not: { _id: Session.get('player')._id } } }).fetch(), function (player) {
+      // the score represents how long of a snake a user can have
+      _.each(player.snakeParts, function (snakePart) {
+        paintCell(snakePart.x, snakePart.y);
+      });
     });
 
     // paint the food
