@@ -1,0 +1,21 @@
+.signup__input {
+    width: 300px;
+    padding: 4px;
+}
+
+.has-error .signup__input {
+    border-color: red;
+}
+
+.error__message {
+    color: maroon;
+}
+
+.board {
+    display: table;
+}
+
+.board__square {
+    display: table-cell;
+    width: 2%;
+}

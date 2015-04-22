@@ -1,0 +1,15 @@
+
+<template name="menu">
+  <h1>Snake Pit</h1>
+
+  <form id="signup">
+    <div class="{{errorClass 'playerName'}}">
+      <label for="player_name">Player Name:</label> 
+      <input class="signup__input" type="text" id="player_name" name="player_name" placeholder="Let them know who's winning">
+      <p class="error__message">{{errorMessage 'playerName'}}</p>
+    </div>
+    <div>
+      <input type="submit" value="Play!" />
+    </div>
+  </form>
+</template>

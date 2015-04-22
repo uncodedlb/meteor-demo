@@ -1,2 +1,3 @@
-# meteor-demo
-A demo of MeteorJS
+# WAPRO Demo Meteor
+
+## A demo of Meteor JS
