@@ -1,35 +1,69 @@
-
 <template name="game">
   <h1>Game Board</h1>
 
-  <div class="scoreboard-wrap">
-    <div class="score">
-    {{#if gameMessage}}
-      {{gameMessage}}
-    {{else}}
-      My Score: {{myScore}}
-    {{/if}}
+  <div class="game-wrap">
+    <div class="board">
+      <canvas width="500" height="500"></canvas>
     </div>
 
-    <div class="leaderboard">
-      <table>
-        <thead>
-          <tr>
-            <th>Score</th>
-            <th>Player Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each players}}
-            <tr>
-              <td>{{score}}</td>
-              <td>{{playerName}}</td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
+    <div class="scoreboard-wrap">
+      <div class="score">
+      {{#if currentPlayer}}
+          {{#if currentPlayer.dead}}
+            <p>
+              You died :(
+              <button id="play_again">Play again?</button>
+            </p>
+            My Score: {{currentPlayer.score}}
+          {{/if}}
+        {{/if}}
+      </div>
+
+      <div class="leaderboard">
+        <div class="leaderboard__wrap">
+          <table class="leaderboard__current">
+            <thead>
+              <tr>
+                <h2>Current Leaders</h2>
+              </tr>
+              <tr>
+                <th>Score</th>
+                <th>Player Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each players}}
+                <tr>
+                  <td>{{score}}</td>
+                  <td>{{playerName}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+          <table class="leaderboard__halloffame">
+            <thead>
+              <tr>
+                <h2>Hall Of Fame</h2>
+              </tr>
+              <tr>
+                <th>Rank</th>
+                <th>Score</th>
+                <th>Player Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each hallOfFame}}
+                <tr>
+                  <td>{{rank}}</td>
+                  <td>{{score}}</td>
+                  <td>{{playerName}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
-  <canvas width="500" height="500"></canvas>
 </template>

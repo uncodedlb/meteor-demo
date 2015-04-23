@@ -1,3 +1,7 @@
+Meteor.publish('hallOfFame', function () {
+  return HallOfFame.find({}, { limit: 10 });
+});
+
 Meteor.publish('players', function () {
   var playerCursor = Players.find();
 
@@ -10,18 +14,12 @@ Meteor.publish('players', function () {
       var x = fields.snakeParts[0].x;
       var y = fields.snakeParts[0].y;
 
-      // check for any collisions with other players
-      var otherPlayers = Players.find({ _id: { $ne: id } }, { fields: { snakeParts: 1 } }).fetch();
+      // check for any collisions with other alive players
+      var otherPlayers = Players.find({ _id: { $ne: id }, dead: false }, { fields: { snakeParts: 1 } }).fetch();
       if (_(otherPlayers).any(function (player) { return checkCollision(x, y, player.snakeParts);})) {
-        // TODO mark player as dead instead of just removing
-        Players.remove(id);
-      }
-
-      // check for collision with self
-      var restOfBody = fields.snakeParts.splice(1);
-      if (checkCollision(x, y, restOfBody)) {
-        // TODO mark player as dead instead of just removing
-        Players.remove(id);
+        // mark player as dead
+        Players.update(id, { $set: { dead: true } });
+        return;
       }
 
       // Check if this player ate the food
