@@ -1,6 +1,29 @@
 
 <template name="game">
   <h1>Game Board</h1>
-  <div class="score">Score: {{score}}</div>
+
+  <div class="scoreboard-wrap">
+    <div class="score">My Score: {{myScore}}</div>
+
+    <div class="leaderboard">
+      <table>
+        <thead>
+          <tr>
+            <th>Score</th>
+            <th>Player Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each players}}
+            <tr>
+              <td>{{score}}</td>
+              <td>{{playerName}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <canvas width="500" height="500"></canvas>
 </template>

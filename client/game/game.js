@@ -8,8 +8,11 @@ var gameLoop;
 var snakes;
 
 Template.game.helpers({
-  score: function () {
-    return Session.get('score') || 0;
+  myScore: function () {
+    return Players.findOne(Session.get('currentPlayer')).score;
+  },
+  players: function () {
+    return Players.find();
   }
 });
 
@@ -20,8 +23,6 @@ Template.game.onCreated(function () {
     Router.go('menu');
     return;
   }
-
-  this.subscribe('players');
 
   // add the keyboard controls
   $(document).on('keydown.game', function (e) {
@@ -39,26 +40,22 @@ Template.game.onCreated(function () {
 Template.game.onDestroyed(function () {
   $(document).off('.game');
   Meteor.call('removePlayer', Session.get('currentPlayer'));
+  clearInterval(gameLoop);
 });
 
 Template.game.onRendered(function () {
 
   var self = this;
   var board;
-  var snakeParts;
 
-  this.autorun(function () {
-    if (self.subscriptionsReady()) {
-      _.defer(init);
-    }
-  });
+  init();
 
   function init() {
 
     board = self.find('canvas').getContext('2d');
     d = "right";
     snakeParts = Players.findOne(Session.get('currentPlayer')).snakeParts;
-    createFood();
+    // createFood();
 
     Session.set('score', 0);
 
@@ -76,6 +73,7 @@ Template.game.onRendered(function () {
     }
   }
 
+  // TODO Move this to the server
   function createFood() {
     // creates a cell with x,y between 0-44
     // there are 45(450/10) positions accross the rows and columns
@@ -87,9 +85,6 @@ Template.game.onRendered(function () {
 
   function paint() {
 
-    console.log("d=", d);
-    debugger;
-
     // avoid the snake trail we need to paint the BG on every frame
     // lets paint the cnavs now
     board.fillStyle = "white";
@@ -100,6 +95,7 @@ Template.game.onRendered(function () {
     // movement code for the snake to come here
     // logic is simple
     // pop out the tail cell and place it in front of the head cell
+    var snakeParts = Players.findOne(Session.get('currentPlayer')).snakeParts;
     var nx = snakeParts[0].x;
     var ny = snakeParts[0].y;
 
@@ -127,33 +123,18 @@ Template.game.onRendered(function () {
     // add the eat the food logic now
     // check if new head position matches with that of the food
     // create a new head instead of moving the tail
-    var tail;
-    if (nx == food.x && ny == food.y) {
-      tail = {
-        x: nx,
-        y: ny
-      };
-      Players.update(Session.get('currentPlayer'), { score: { $inc: 1 } });
-
-      // create more food!
-      createFood();
-    }
-    else {
-      tail = snakeParts.pop(); // pops out the last cell
+    var tail = snakeParts.pop(); // pops out the last cell
       tail.x = nx;
       tail.y = ny;
-    }
 
     // snake can eat the food
     snakeParts.unshift(tail); // puts the tail as the first cell
 
-    _.each(snakeParts, function (snakePart) {
-      // paint 10px wide cells
-      paintCell(snakePart.x, snakePart.y);
-    });
+    // update this player's current position on the server
+    Players.update(Session.get('currentPlayer'), { $set: { snakeParts: snakeParts } });
 
-    // render the other players
-    _.each(Players.find({ _id: { $ne: Session.get('currentPlayer') } }).fetch(), function (player) {
+    // render the players
+    _.each(Players.find().fetch(), function (player) {
       // the score represents how long of a snake a user can have
       _.each(player.snakeParts, function (snakePart) {
         paintCell(snakePart.x, snakePart.y);
@@ -161,7 +142,9 @@ Template.game.onRendered(function () {
     });
 
     // paint the food
-    paintCell(food.x, food.y);
+    _.each(Food.find().fetch(), function (food) {
+      paintCell(food.x, food.y);
+    });
   }
 
   function paintCell(x, y) {
