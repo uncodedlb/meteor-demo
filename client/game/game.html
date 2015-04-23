@@ -3,7 +3,13 @@
   <h1>Game Board</h1>
 
   <div class="scoreboard-wrap">
-    <div class="score">My Score: {{myScore}}</div>
+    <div class="score">
+    {{#if gameMessage}}
+      {{gameMessage}}
+    {{else}}
+      My Score: {{myScore}}
+    {{/if}}
+    </div>
 
     <div class="leaderboard">
       <table>
