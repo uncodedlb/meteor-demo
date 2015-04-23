@@ -136,9 +136,9 @@ Template.game.onRendered(function () {
     board.strokeStyle = "black";
     board.strokeRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
 
-        // render the players
+    // render the players
     _.each(Players.find({ dead: false }).fetch(), function (player) {
-      // the score represents how long of a snake a user can have
+
       _.each(player.snakeParts, function (snakePart) {
         if (player._id === Session.get('currentPlayer'))
           paintCell(snakePart.x, snakePart.y);
@@ -151,6 +151,11 @@ Template.game.onRendered(function () {
     _.each(Food.find().fetch(), function (food) {
       paintCell(food.x, food.y);
     });
+
+    // allow spectators
+    if (!Players.findOne(Session.get('currentPlayer'))) {
+      return;
+    }
 
     if (Players.findOne(Session.get('currentPlayer')).dead) {
       Session.set('gameMessages', "You died :(");
@@ -173,6 +178,14 @@ Template.game.onRendered(function () {
     else if (d == "up") ny--;
     else if (d == "down") ny++;
 
+    // check for any collisions with other alive players
+    var otherPlayers = Players.find({ _id: { $ne: Session.get('currentPlayer') }, dead: false }, { fields: { snakeParts: 1 } }).fetch();
+      if (_(otherPlayers).any(function (player) { return checkCollision(nx, ny, player.snakeParts);})) {
+        // mark player as dead
+        Players.update(Session.get('currentPlayer'), { $set: { dead: true } });
+        return;
+      }
+
     if (checkCollision(nx, ny, snakeParts)) {
       Players.update(Session.get('currentPlayer'), { $set: { dead: true } });
       return;
@@ -190,10 +203,24 @@ Template.game.onRendered(function () {
     });
 
     if (food) {
+        // update this players score
+        Players.update(Session.get('currentPlayer'), { $inc: { score: 1} });
+
+        // Remove the this food
+        Food.remove(food._id, function (err) {
+          if (err)
+            console.error(err);
+
+          // replace this food
+          Meteor.call('createFood');
+
+        });
+
       tail = {
         x: nx,
         y: ny
       };
+
     } else {
       tail = snakeParts.pop(); // pops out the last cell
       tail.x = nx;
