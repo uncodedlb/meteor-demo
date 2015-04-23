@@ -6,6 +6,9 @@ Template.game.helpers({
   currentPlayer: function () {
     return Players.findOne(Session.get('currentPlayer'));
   },
+  leaders: function () {
+    return Players.find({ dead: false }, { sort: { score: -1 }, fields: { playerName: 1, score: 1 } });
+  },
   players: function () {
     return Players.find({ dead: false }, { sort: { score: -1 } });
   },
