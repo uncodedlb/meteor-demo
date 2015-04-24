@@ -5,7 +5,7 @@
   <form id="signup">
     <div class="{{errorClass 'playerName'}}">
       <label for="player_name">Player Name:</label> 
-      <input class="signup__input" type="text" id="player_name" name="player_name" placeholder="Let them know who's winning">
+      <input class="signup__input" type="text" id="player_name" name="player_name" placeholder="Let them know who's winning" value="{{currentPlayer.playerName}}">
       <p class="error__message">{{errorMessage 'playerName'}}</p>
     </div>
     <div>

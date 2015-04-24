@@ -1,5 +1,4 @@
 
-var d;
 var gameLoop;
 
 Template.game.helpers({
@@ -16,7 +15,7 @@ Template.game.helpers({
     return Session.get('gameMessages');
   },
   hallOfFame: function () {
-    return HallOfFame.find({},  {sort: {score: -1}}).map(function(player, index) {
+    return HallOfFame.find({},  { sort: {score: -1 } }).map(function(player, index) {
       player.rank = index + 1;
       return player;
     });
@@ -48,9 +47,10 @@ Template.game.onCreated(function () {
   // add the keyboard controls
   $(document).on('keydown.game', function (e) {
     var key = e.which;
+    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
 
     // allow scrolling when player is dead
-    if (Players.findOne(Session.get('currentPlayer')).dead) {
+    if (currentPlayer && currentPlayer.dead) {
       // allow space to resurrect player
       if (key == "32") {
         Meteor.call('resurrectPlayer', Session.get('currentPlayer'));
@@ -60,42 +60,44 @@ Template.game.onCreated(function () {
       return true;
     }
 
+    var d = currentPlayer.d;
+
     // add clause to prevent reverse gear
     if (key == "37" && d != "right") {
-      d = "left"; // left arrow
+      Players.update(currentPlayer._id,  { $set: { direction: "left" } }); // left arrow
       return false;
     }
     else if (key == "65" && d != "right") {
-      d = "left"; // a
+      Players.update(currentPlayer._id,  { $set: { direction: "left" } }); // a
       return false;
     }
     else if (key == "38" && d != "down") {
-      d = "up"; // up arrow
+      Players.update(currentPlayer._id,  { $set: { direction: "up" } }); // up arrow
       return false;
     }
     else if (key == "87" && d != "down") {
-      d = "up"; // w
+      Players.update(currentPlayer._id,  { $set: { direction: "up" } }); // w
       return false;
     }
     else if (key == "39" && d != "left") {
-      d = "right"; // right arrow
+      Players.update(currentPlayer._id,  { $set: { direction: "right" } }); // right arrow
       return false;
     }
     else if (key == "68" && d != "left") {
-      d = "right"; // d
+      Players.update(currentPlayer._id,  { $set: { direction: "right" } }); // d
       return false;
     }
     else if (key == "40" && d != "up") {
-      d = "down"; // down arrow
+      Players.update(currentPlayer._id,  { $set: { direction: "down" } }); // down arrow
       return false;
     }
     else if (key == "83" && d != "up") {
-      d = "down";  // s
+      Players.update(currentPlayer._id,  { $set: { direction: "down" } });  // s
       return false;
     }
 
     // if player is not dead, just return false on any keys not caught
-    if (!Players.findOne(Session.get('currentPlayer')).dead) {
+    if (!currentPlayer.dead) {
       return false;
     }
   });
@@ -130,7 +132,7 @@ Template.game.onRendered(function () {
     }
 
     // avoid the snake trail we need to paint the BG on every frame
-    // lets paint the cnavs now
+    // lets paint the canvas now
     board.fillStyle = "white";
     board.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
     board.strokeStyle = "black";
@@ -149,7 +151,7 @@ Template.game.onRendered(function () {
 
     // paint the food
     _.each(Food.find().fetch(), function (food) {
-      paintCell(food.x, food.y);
+      paintFoodCell(food.x, food.y);
     });
 
     // allow spectators
@@ -159,14 +161,15 @@ Template.game.onRendered(function () {
 
     if (Players.findOne(Session.get('currentPlayer')).dead) {
       Session.set('gameMessages', "You died :(");
-      d = "right";
       return;
     }
 
     // movement code for the snake to come here
     // logic is simple
     // pop out the tail cell and place it in front of the head cell
-    var snakeParts = Players.findOne(Session.get('currentPlayer')).snakeParts;
+    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+    var snakeParts = currentPlayer.snakeParts;
+    var d = currentPlayer.direction;
     var nx = snakeParts[0].x;
     var ny = snakeParts[0].y;
 
@@ -203,24 +206,7 @@ Template.game.onRendered(function () {
     });
 
     if (food) {
-        // update this players score
-        Players.update(Session.get('currentPlayer'), { $inc: { score: 1} });
-
-        // Remove the this food
-        Food.remove(food._id, function (err) {
-          if (err)
-            console.error(err);
-
-          // replace this food
-          Meteor.call('createFood');
-
-        });
-
-      tail = {
-        x: nx,
-        y: ny
-      };
-
+      tail = { x: nx, y: ny };
     } else {
       tail = snakeParts.pop(); // pops out the last cell
       tail.x = nx;
@@ -231,7 +217,18 @@ Template.game.onRendered(function () {
     snakeParts.unshift(tail); // puts the tail as the first cell
 
     // update this player's current position on the server
-    Players.update(Session.get('currentPlayer'), { $set: { snakeParts: snakeParts } });
+    Players.update(Session.get('currentPlayer'), { $set: { snakeParts: snakeParts } }, function () {
+      // update this players score
+      if (food)
+        Meteor.call('playerScored', food);
+    });
+  }
+
+  function paintFoodCell(x, y) {
+    board.fillStyle = "green";
+    board.fillRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
+    board.strokeText = "white";
+    board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
   }
 
   function paintOtherPlayerCell (x, y) {

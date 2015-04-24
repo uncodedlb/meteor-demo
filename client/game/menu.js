@@ -2,6 +2,9 @@
 
 Template.menu.onCreated(function () {
   Session.set('menuSubmitErrors', {});
+  var existingPlayer = Players.findOne({ userId: Meteor.userId() });
+  if (existingPlayer)
+    Session.set('currentPlayer', existingPlayer._id);
 });
 
 Template.menu.helpers({
@@ -10,6 +13,9 @@ Template.menu.helpers({
   },
   errorClass: function (field) {
     return !!Session.get('menuSubmitErrors')[field] ? 'has-error' : '';
+  },
+  currentPlayer: function () {
+    return Players.findOne(Session.get('currentPlayer'));
   }
 });
 
@@ -19,6 +25,7 @@ Template.menu.events({
     e.preventDefault();
 
     var player = {
+      userId: Meteor.userId(),
       playerName: $(e.target).find('[name=player_name]').val()
     };
 
@@ -26,11 +33,29 @@ Template.menu.events({
     if (_.any(errors))
       return Session.set('menuSubmitErrors', errors);
 
-    // create new player and take them to the game!
-    Players.insert(player, function (err, _id) {
-      Session.set('currentPlayer', _id);
-      Router.go('game');
-    });
+
+    if (Session.get('currentPlayer')) {
+      Players.update(Session.get('currentPlayer'), { $set: { playerName: player.playerName } }, function (err) {
+        if (err){
+          console.error(err);
+          return;
+        }
+
+        Router.go('game');
+      });
+    } else {
+      Players.insert(player, function (err, _id) {
+        if (err){
+          console.error(err);
+          return;
+        }
+
+        // a new player was made, set it on the session
+        Session.set('currentPlayer', _id);
+
+        Router.go('game');
+      });
+    }
 
     return false;
   }
