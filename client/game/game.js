@@ -46,6 +46,7 @@ Template.game.onCreated(function () {
 
   // add the keyboard controls
   $(document).on('keydown.game', function (e) {
+
     var key = e.which;
     var currentPlayer = Players.findOne(Session.get('currentPlayer'));
 
