@@ -61,7 +61,7 @@ Template.game.onCreated(function () {
       return true;
     }
 
-    var d = currentPlayer.d;
+    var d = currentPlayer.direction;
 
     // add clause to prevent reverse gear
     if (key == "37" && d != "right") {
@@ -175,6 +175,17 @@ Template.game.onRendered(function () {
     else if (d == "left") nx--;
     else if (d == "up") ny--;
     else if (d == "down") ny++;
+
+    // loop around if we hit a wall
+    if (nx >= MAX_WIDTH / CELL_WIDTH)
+      nx = 0;
+    else if (nx < -1)
+      nx = (MAX_WIDTH / CELL_WIDTH) -1;
+
+    if (ny >= MAX_HEIGHT / CELL_WIDTH)
+      ny = 0;
+    else if (ny < -1)
+      ny = (MAX_HEIGHT / CELL_WIDTH) -1;
 
     // check for any collisions with other alive players
     var otherPlayers = Players.find({ _id: { $ne: Session.get('currentPlayer') }, dead: false }, { fields: { snakeParts: 1 } }).fetch();
