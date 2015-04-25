@@ -2,6 +2,13 @@
 var gameLoop;
 
 Template.game.helpers({
+  displayScoreboard: function () {
+    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+    return currentPlayer.dead || (!currentPlayer.dead && !Meteor.Device.isPhone());
+  }
+});
+
+Template.scoreboard.helpers({
   currentPlayer: function () {
     return Players.findOne(Session.get('currentPlayer'));
   },
@@ -29,6 +36,38 @@ Template.game.events({
       Meteor.call('resurrectPlayer', deadPlayer._id);
     } else {
       Router.go('menu');
+    }
+  },
+  'touchstart #up': function () {
+    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+    var d = currentPlayer.direction;
+
+    if (d != "down") {
+      Players.update(currentPlayer._id,  { $set: { direction: "up" } });
+    }
+  },
+  'touchstart #right': function () {
+    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+    var d = currentPlayer.direction;
+
+    if (d != "left") {
+      Players.update(currentPlayer._id,  { $set: { direction: "right" } });
+    }
+  },
+  'touchstart #left': function () {
+    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+    var d = currentPlayer.direction;
+
+    if (d != "right") {
+      Players.update(currentPlayer._id,  { $set: { direction: "left" } });
+    }
+  },
+  'touchstart #down': function () {
+    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+    var d = currentPlayer.direction;
+
+    if (d != "up") {
+      Players.update(currentPlayer._id,  { $set: { direction: "down" } });
     }
   }
 });

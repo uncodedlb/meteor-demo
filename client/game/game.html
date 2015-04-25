@@ -1,71 +1,87 @@
 <template name="game">
-  <h1>Game Board</h1>
-
   <div class="game-wrap">
     <div class="board">
       <canvas width="500" height="500"></canvas>
+
+      {{#unless isDesktop}}
+        <div>
+          <div>
+            <button class="direction-btn" id="up">&#8593;</button>
+          </div>
+          <div>
+            <button class="direction-btn" id="left">&#8592;</button>
+            <button class="direction-btn" id="down">&#8595;</button>
+            <button class="direction-btn" id="right">&#8594;</button>
+          </div>
+        </div>
+      {{/unless}}
+
+      {{#if displayScoreboard}}
+        {{>scoreboard}}
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<template name="scoreboard">
+  <div class="scoreboard-wrap">
+    <div class="score">
+      {{#if currentPlayer}}
+        {{#if currentPlayer.dead}}
+          <div>
+            <p>
+              {{gameMessage}}
+              <button id="play_again">Play</button>
+            </p>
+          </div>
+          <div>My Score: {{currentPlayer.score}}</div>
+        {{/if}}
+      {{/if}}
     </div>
 
-    <div class="scoreboard-wrap">
-      <div class="score">
-      {{#if currentPlayer}}
-          {{#if currentPlayer.dead}}
-            <div>
-              <p>
-                {{gameMessage}}
-                <button id="play_again">Play</button>
-              </p>
-            </div>
-            <div>My Score: {{currentPlayer.score}}</div>
-          {{/if}}
-        {{/if}}
-      </div>
-
-      <div class="leaderboard">
-        <div class="leaderboard__wrap">
-          <table class="leaderboard__current">
-            <thead>
+    <div class="leaderboard">
+      <div class="leaderboard__wrap">
+        <table class="leaderboard__current">
+          <thead>
+            <tr>
+              <h2>Current Leaders</h2>
+            </tr>
+            <tr>
+              <th>Score</th>
+              <th>Player Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each leaders}}
               <tr>
-                <h2>Current Leaders</h2>
+                <td>{{score}}</td>
+                <td>{{playerName}}</td>
               </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        <table class="leaderboard__halloffame">
+          <thead>
+            <tr>
+              <h2>Hall Of Fame</h2>
+            </tr>
+            <tr>
+              <th>Rank</th>
+              <th>Score</th>
+              <th>Player Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each hallOfFame}}
               <tr>
-                <th>Score</th>
-                <th>Player Name</th>
+                <td>{{rank}}</td>
+                <td>{{score}}</td>
+                <td>{{playerName}}</td>
               </tr>
-            </thead>
-            <tbody>
-              {{#each leaders}}
-                <tr>
-                  <td>{{score}}</td>
-                  <td>{{playerName}}</td>
-                </tr>
-              {{/each}}
-            </tbody>
-          </table>
-          <table class="leaderboard__halloffame">
-            <thead>
-              <tr>
-                <h2>Hall Of Fame</h2>
-              </tr>
-              <tr>
-                <th>Rank</th>
-                <th>Score</th>
-                <th>Player Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each hallOfFame}}
-                <tr>
-                  <td>{{rank}}</td>
-                  <td>{{score}}</td>
-                  <td>{{playerName}}</td>
-                </tr>
-              {{/each}}
-            </tbody>
-          </table>
-        </div>
+            {{/each}}
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-
 </template>
