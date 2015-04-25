@@ -1,9 +1,14 @@
-
 var gameLoop;
 
 Template.game.helpers({
   displayScoreboard: function () {
     var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+
+    if (!currentPlayer) {
+      return;
+    }
+
+    // display the scoreboard on mobile screens only when the player is dead
     return currentPlayer.dead || (!currentPlayer.dead && !Meteor.Device.isPhone());
   }
 });
@@ -13,16 +18,36 @@ Template.scoreboard.helpers({
     return Players.findOne(Session.get('currentPlayer'));
   },
   leaders: function () {
-    return Players.find({ dead: false }, { sort: { score: -1 }, fields: { playerName: 1, score: 1 } });
+    return Players.find({
+      dead: false
+    }, {
+      sort: {
+        score: -1
+      },
+      fields: {
+        playerName: 1,
+        score: 1
+      }
+    });
   },
   players: function () {
-    return Players.find({ dead: false }, { sort: { score: -1 } });
+    return Players.find({
+      dead: false
+    }, {
+      sort: {
+        score: -1
+      }
+    });
   },
   gameMessage: function () {
     return Session.get('gameMessages');
   },
   hallOfFame: function () {
-    return HallOfFame.find({},  { sort: {score: -1 } }).map(function(player, index) {
+    return HallOfFame.find({}, {
+      sort: {
+        score: -1
+      }
+    }).map(function (player, index) {
       player.rank = index + 1;
       return player;
     });
@@ -31,10 +56,14 @@ Template.scoreboard.helpers({
 
 Template.game.events({
   'click #play_again': function () {
-    var deadPlayer = Players.findOne({ _id: Session.get('currentPlayer'), dead: true });
+    var deadPlayer = Players.findOne({
+      _id: Session.get('currentPlayer'),
+      dead: true
+    });
     if (deadPlayer) {
       Meteor.call('resurrectPlayer', deadPlayer._id);
-    } else {
+    }
+    else {
       Router.go('menu');
     }
   },
@@ -43,7 +72,11 @@ Template.game.events({
     var d = currentPlayer.direction;
 
     if (d != "down") {
-      Players.update(currentPlayer._id,  { $set: { direction: "up" } });
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "up"
+        }
+      });
     }
   },
   'touchstart #right': function () {
@@ -51,7 +84,11 @@ Template.game.events({
     var d = currentPlayer.direction;
 
     if (d != "left") {
-      Players.update(currentPlayer._id,  { $set: { direction: "right" } });
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "right"
+        }
+      });
     }
   },
   'touchstart #left': function () {
@@ -59,7 +96,11 @@ Template.game.events({
     var d = currentPlayer.direction;
 
     if (d != "right") {
-      Players.update(currentPlayer._id,  { $set: { direction: "left" } });
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "left"
+        }
+      });
     }
   },
   'touchstart #down': function () {
@@ -67,7 +108,11 @@ Template.game.events({
     var d = currentPlayer.direction;
 
     if (d != "up") {
-      Players.update(currentPlayer._id,  { $set: { direction: "down" } });
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "down"
+        }
+      });
     }
   }
 });
@@ -75,7 +120,7 @@ Template.game.events({
 Template.game.onCreated(function () {
 
   // make sure we always have a player to start with
-  if (! Session.get('currentPlayer')) {
+  if (!Players.findOne(Session.get('currentPlayer'))) {
     Router.go('menu');
     return;
   }
@@ -104,35 +149,67 @@ Template.game.onCreated(function () {
 
     // add clause to prevent reverse gear
     if (key == "37" && d != "right") {
-      Players.update(currentPlayer._id,  { $set: { direction: "left" } }); // left arrow
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "left"
+        }
+      }); // left arrow
       return false;
     }
     else if (key == "65" && d != "right") {
-      Players.update(currentPlayer._id,  { $set: { direction: "left" } }); // a
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "left"
+        }
+      }); // a
       return false;
     }
     else if (key == "38" && d != "down") {
-      Players.update(currentPlayer._id,  { $set: { direction: "up" } }); // up arrow
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "up"
+        }
+      }); // up arrow
       return false;
     }
     else if (key == "87" && d != "down") {
-      Players.update(currentPlayer._id,  { $set: { direction: "up" } }); // w
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "up"
+        }
+      }); // w
       return false;
     }
     else if (key == "39" && d != "left") {
-      Players.update(currentPlayer._id,  { $set: { direction: "right" } }); // right arrow
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "right"
+        }
+      }); // right arrow
       return false;
     }
     else if (key == "68" && d != "left") {
-      Players.update(currentPlayer._id,  { $set: { direction: "right" } }); // d
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "right"
+        }
+      }); // d
       return false;
     }
     else if (key == "40" && d != "up") {
-      Players.update(currentPlayer._id,  { $set: { direction: "down" } }); // down arrow
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "down"
+        }
+      }); // down arrow
       return false;
     }
     else if (key == "83" && d != "up") {
-      Players.update(currentPlayer._id,  { $set: { direction: "down" } });  // s
+      Players.update(currentPlayer._id, {
+        $set: {
+          direction: "down"
+        }
+      }); // s
       return false;
     }
 
@@ -165,6 +242,9 @@ Template.game.onRendered(function () {
 
   function paint() {
 
+    // look up our current player
+    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+
     // avoid the snake trail we need to paint the BG on every frame
     // lets paint the canvas now
     board.fillStyle = "white";
@@ -173,13 +253,19 @@ Template.game.onRendered(function () {
     board.strokeRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
 
     // render the players
-    _.each(Players.find({ dead: false }).fetch(), function (player) {
+    _.each(Players.find({
+      dead: false
+    }).fetch(), function (player) {
 
       _.each(player.snakeParts, function (snakePart) {
+
         if (player._id === Session.get('currentPlayer'))
+          // paint current players snake blue
           paintCell(snakePart.x, snakePart.y);
         else
+          // paint other players red
           paintOtherPlayerCell(snakePart.x, snakePart.y);
+
       });
     });
 
@@ -188,12 +274,12 @@ Template.game.onRendered(function () {
       paintFoodCell(food.x, food.y);
     });
 
-    // allow spectators
-    if (!Players.findOne(Session.get('currentPlayer'))) {
+    // no current player, just return
+    if (!currentPlayer) {
       return;
     }
 
-    if (Players.findOne(Session.get('currentPlayer')).dead && !Session.get('firstStart')) {
+    if (currentPlayer.dead && !Session.get('firstStart')) {
       Session.set('gameMessages', "You died :(");
       return;
     }
@@ -201,7 +287,6 @@ Template.game.onRendered(function () {
     // movement code for the snake to come here
     // logic is simple
     // pop out the tail cell and place it in front of the head cell
-    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
     var snakeParts = currentPlayer.snakeParts;
     var d = currentPlayer.direction;
     var nx = snakeParts[0].x;
@@ -219,23 +304,51 @@ Template.game.onRendered(function () {
     if (nx >= MAX_WIDTH / CELL_WIDTH)
       nx = 0;
     else if (nx < -1)
-      nx = (MAX_WIDTH / CELL_WIDTH) -1;
+      nx = (MAX_WIDTH / CELL_WIDTH) - 1;
 
     if (ny >= MAX_HEIGHT / CELL_WIDTH)
       ny = 0;
     else if (ny < -1)
-      ny = (MAX_HEIGHT / CELL_WIDTH) -1;
+      ny = (MAX_HEIGHT / CELL_WIDTH) - 1;
 
-    // check for any collisions with other alive players
-    var otherPlayers = Players.find({ _id: { $ne: Session.get('currentPlayer') }, dead: false }, { fields: { snakeParts: 1 } }).fetch();
-      if (_(otherPlayers).any(function (player) { return checkCollision(nx, ny, player.snakeParts);})) {
-        // mark player as dead
-        Players.update(Session.get('currentPlayer'), { $set: { dead: true } });
-        return;
+    // find all the other alive players
+    var otherPlayers = Players.find({
+      _id: {
+        $ne: currentPlayer._id
+      },
+      dead: false
+    }, {
+      fields: {
+        snakeParts: 1,
+        _id: 1
       }
+    }).fetch();
 
+    // check for any collisions with the other players
+    var executioner = _(otherPlayers).find(function (player) {
+      return checkCollision(nx, ny, player.snakeParts);
+    });
+
+    if (executioner) {
+      // mark player as dead
+      Players.update(currentPlayer._id, {
+        $set: {
+          dead: true
+        }
+      });
+
+      Meteor.call('giveKillCredit', executioner._id);
+
+      return;
+    }
+
+    // check whether the current player collided with it's own snake
     if (checkCollision(nx, ny, snakeParts)) {
-      Players.update(Session.get('currentPlayer'), { $set: { dead: true } });
+      Players.update(currentPlayer._id, {
+        $set: {
+          dead: true
+        }
+      });
       return;
     }
 
@@ -245,14 +358,18 @@ Template.game.onRendered(function () {
     var tail;
 
     // Check if this player found food
-    var food = _.find(Food.find().fetch(), function (food) {
+    var food = _(Food.find().fetch()).find(function (food) {
       // only have to check the head of the snake
       return (nx == food.x && ny == food.y);
     });
 
     if (food) {
-      tail = { x: nx, y: ny };
-    } else {
+      tail = {
+        x: nx,
+        y: ny
+      };
+    }
+    else {
       tail = snakeParts.pop(); // pops out the last cell
       tail.x = nx;
       tail.y = ny;
@@ -262,10 +379,14 @@ Template.game.onRendered(function () {
     snakeParts.unshift(tail); // puts the tail as the first cell
 
     // update this player's current position on the server
-    Players.update(Session.get('currentPlayer'), { $set: { snakeParts: snakeParts } }, function () {
+    Players.update(currentPlayer._id, {
+      $set: {
+        snakeParts: snakeParts
+      }
+    }, function () {
       // update this players score
       if (food)
-        Meteor.call('playerScored', Session.get('currentPlayer'), food);
+        Meteor.call('playerScored', currentPlayer._id, food);
     });
   }
 
@@ -273,20 +394,23 @@ Template.game.onRendered(function () {
     board.fillStyle = "green";
     board.fillRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
     board.strokeText = "white";
-    board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
+    board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH,
+      CELL_WIDTH);
   }
 
-  function paintOtherPlayerCell (x, y) {
+  function paintOtherPlayerCell(x, y) {
     board.fillStyle = "red";
     board.fillRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
     board.strokeText = "white";
-    board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
+    board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH,
+      CELL_WIDTH);
   }
 
   function paintCell(x, y) {
     board.fillStyle = "blue";
     board.fillRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
     board.strokeText = "white";
-    board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
+    board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH,
+      CELL_WIDTH);
   }
 });
