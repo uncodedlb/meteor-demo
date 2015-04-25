@@ -52,10 +52,13 @@ Template.menu.events({
 
         // a new player was made, set it on the session
         Session.set('currentPlayer', _id);
+        Session.set('gameMessages', "Press space bar to play!");
 
         Router.go('game');
       });
     }
+
+    Session.set('firstStart', true);
 
     return false;
   }

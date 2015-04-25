@@ -106,7 +106,6 @@ Template.game.onCreated(function () {
 
 Template.game.onDestroyed(function () {
   $(document).off('.game');
-  Players.remove(Session.get('currentPlayer'));
   clearInterval(gameLoop);
 });
 
@@ -126,11 +125,6 @@ Template.game.onRendered(function () {
   }
 
   function paint() {
-
-    if (_.isUndefined(Players.findOne(Session.get('currentPlayer')))) {
-      Router.go('menu');
-      return;
-    }
 
     // avoid the snake trail we need to paint the BG on every frame
     // lets paint the canvas now
@@ -160,7 +154,7 @@ Template.game.onRendered(function () {
       return;
     }
 
-    if (Players.findOne(Session.get('currentPlayer')).dead) {
+    if (Players.findOne(Session.get('currentPlayer')).dead && !Session.get('firstStart')) {
       Session.set('gameMessages', "You died :(");
       return;
     }
@@ -221,7 +215,7 @@ Template.game.onRendered(function () {
     Players.update(Session.get('currentPlayer'), { $set: { snakeParts: snakeParts } }, function () {
       // update this players score
       if (food)
-        Meteor.call('playerScored', food);
+        Meteor.call('playerScored', Session.get('currentPlayer'), food);
     });
   }
 

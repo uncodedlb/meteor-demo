@@ -14,12 +14,5 @@ Meteor.publish('players', function () {
 
 Meteor.publish('food', function () {
   var foodCursor = Food.find();
-
-  foodCursor.observeChanges({
-    removed: function (id) {
-      Meteor.call('createFood');
-    }
-  });
-
   return foodCursor;
 });

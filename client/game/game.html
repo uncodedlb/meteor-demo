@@ -10,11 +10,13 @@
       <div class="score">
       {{#if currentPlayer}}
           {{#if currentPlayer.dead}}
-            <p>
-              You died :(
-              <button id="play_again">Play again?</button>
-            </p>
-            My Score: {{currentPlayer.score}}
+            <div>
+              <p>
+                {{gameMessage}}
+                <button id="play_again">Play</button>
+              </p>
+            </div>
+            <div>My Score: {{currentPlayer.score}}</div>
           {{/if}}
         {{/if}}
       </div>
