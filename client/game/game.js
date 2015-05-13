@@ -54,6 +54,7 @@ Template.scoreboard.helpers({
   }
 });
 
+var touchCoords;
 Template.game.events({
   'click #play_again': function () {
     var deadPlayer = Players.findOne({
@@ -67,52 +68,51 @@ Template.game.events({
       Router.go('menu');
     }
   },
-  'touchstart #up': function () {
-    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
-    var d = currentPlayer.direction;
 
-    if (d != "down") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "up"
-        }
-      });
+  'touchstart #js-game-board': function (event, template) {
+    var changedTouches = event.originalEvent.changedTouches[0];
+    touchCoords = { x: changedTouches.pageX, y: changedTouches.pageY };
+  },
+
+  'touchmove #js-game-board': function (event) {
+    event.preventDefault();
+
+   var changedTouches = event.originalEvent.changedTouches[0];
+    var dX = changedTouches.pageX - touchCoords.x;
+    var dY = changedTouches.pageY - touchCoords.y;
+    var threshold = 50;
+    var restraint = 25;
+    var swipeDir;
+
+    if (Math.abs(dX) >= threshold && Math.abs(dY) <= restraint){ // 2nd condition for horizontal swipe met
+      swipeDir = (dX < 0)? 'left' : 'right'; // if dist traveled is negative, it indicates left swipe
+    }
+    else if (Math.abs(dY) >= threshold && Math.abs(dX) <= restraint){ // 2nd condition for vertical swipe met
+      swipeDir = (dY < 0)? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
+    }
+
+    if (swipeDir) {
+      updateDirection(swipeDir);
     }
   },
-  'touchstart #right': function () {
-    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
-    var d = currentPlayer.direction;
 
-    if (d != "left") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "right"
-        }
-      });
+  'touchend #js-game-board': function (event, template) {
+    var changedTouches = event.originalEvent.changedTouches[0];
+    var dX = changedTouches.pageX - touchCoords.x;
+    var dY = changedTouches.pageY - touchCoords.y;
+    var threshold = 50;
+    var restraint = 25;
+    var swipeDir;
+
+    if (Math.abs(dX) >= threshold && Math.abs(dY) <= restraint){ // 2nd condition for horizontal swipe met
+      swipeDir = (dX < 0)? 'left' : 'right'; // if dist traveled is negative, it indicates left swipe
     }
-  },
-  'touchstart #left': function () {
-    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
-    var d = currentPlayer.direction;
-
-    if (d != "right") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "left"
-        }
-      });
+    else if (Math.abs(dY) >= threshold && Math.abs(dX) <= restraint){ // 2nd condition for vertical swipe met
+      swipeDir = (dY < 0)? 'up' : 'down'; // if dist traveled is negative, it indicates up swipe
     }
-  },
-  'touchstart #down': function () {
-    var currentPlayer = Players.findOne(Session.get('currentPlayer'));
-    var d = currentPlayer.direction;
 
-    if (d != "up") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "down"
-        }
-      });
+    if (swipeDir) {
+      updateDirection(swipeDir);
     }
   }
 });
@@ -145,71 +145,37 @@ Template.game.onCreated(function () {
       return true;
     }
 
-    var d = currentPlayer.direction;
-
     // add clause to prevent reverse gear
-    if (key == "37" && d != "right") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "left"
-        }
-      }); // left arrow
+    if (key == "37") {
+      updateDirection("left");
       return false;
     }
-    else if (key == "65" && d != "right") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "left"
-        }
-      }); // a
+    else if (key == "65") {
+      updateDirection("left");
       return false;
     }
-    else if (key == "38" && d != "down") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "up"
-        }
-      }); // up arrow
+    else if (key == "38") {
+      updateDirection("up");
       return false;
     }
-    else if (key == "87" && d != "down") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "up"
-        }
-      }); // w
+    else if (key == "87") {
+      updateDirection("up");
       return false;
     }
-    else if (key == "39" && d != "left") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "right"
-        }
-      }); // right arrow
+    else if (key == "39") {
+      updateDirection("right");
       return false;
     }
-    else if (key == "68" && d != "left") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "right"
-        }
-      }); // d
+    else if (key == "68") {
+      updateDirection("right");
       return false;
     }
-    else if (key == "40" && d != "up") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "down"
-        }
-      }); // down arrow
+    else if (key == "40") {
+      updateDirection("down");
       return false;
     }
-    else if (key == "83" && d != "up") {
-      Players.update(currentPlayer._id, {
-        $set: {
-          direction: "down"
-        }
-      }); // s
+    else if (key == "83") {
+      updateDirection("down");
       return false;
     }
 
@@ -414,3 +380,36 @@ Template.game.onRendered(function () {
       CELL_WIDTH);
   }
 });
+
+function updateDirection(newDirection) {
+  var currentPlayer = Players.findOne(Session.get('currentPlayer'));
+
+  if (newDirection == "left" && currentPlayer.direction != "right") {
+    Players.update(currentPlayer._id, {
+      $set: {
+        direction: newDirection
+      }
+    });
+  }
+  else if (newDirection == "up" && currentPlayer.direction != "down") {
+    Players.update(currentPlayer._id, {
+      $set: {
+        direction: newDirection
+      }
+    });
+  }
+  else if (newDirection == "right" && currentPlayer.direction != "left") {
+    Players.update(currentPlayer._id, {
+      $set: {
+        direction: newDirection
+      }
+    });
+  }
+  else if (newDirection == "down" && currentPlayer.direction != "up") {
+    Players.update(currentPlayer._id, {
+      $set: {
+        direction: newDirection
+      }
+    });
+  }
+}

@@ -1,19 +1,10 @@
 <template name="game">
   <div class="game-wrap">
     <div class="board">
-      <canvas width="500" height="500"></canvas>
+      <canvas id="js-game-board" width="500" height="500"></canvas>
 
       {{#unless isDesktop}}
-        <div>
-          <div>
-            <button class="direction-btn" id="up">&#8593;</button>
-          </div>
-          <div>
-            <button class="direction-btn" id="left">&#8592;</button>
-            <button class="direction-btn" id="down">&#8595;</button>
-            <button class="direction-btn" id="right">&#8594;</button>
-          </div>
-        </div>
+        Swipe the game board to control your snake
       {{/unless}}
 
       {{#if displayScoreboard}}
