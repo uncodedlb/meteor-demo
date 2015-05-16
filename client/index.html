@@ -9,7 +9,7 @@
 
 <template name="splash">
     <!-- navbar -->
-    <nav class="navbar navbar-default" role="navigation">
+    <nav id="navigation-bar" class="navbar navbar-default" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -20,7 +20,6 @@
             </button>
             <a class="navbar-brand" href="#">Snake Pit</a>
         </div>
-    
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav">
@@ -33,11 +32,34 @@
     </nav>
     <!-- end navbar -->
 
-    <div  id="limit-container" class="container">
-        <div id="home-page" class="">
-            <a href={{pathFor 'menu'}}>Play Snake Pit</a>
+    <div  id="limit-container" class="">
+        <div class="cta-container">
+            <div id="cta-play" class="text-center">
+                <div class="">
+                    <h2 class="text-center">Snake Pit</h2>
+                </div>
+            </div>
+            <div id="cta-container" class="text-center">
+                <button id="cto-button" class="btn btn-lg">
+                    <a href={{pathFor 'menu'}}>Play</a>
+                </button>
+            </div>
         </div>
+        
     </div>
+    
+        <div id="leader-scores" class="container">
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                <a href="#" class="thumbnail">
+                    <img src="http://images5.fanpop.com/image/photos/30800000/-Random-random-30843841-1920-1080.jpg" alt="">
+                </a>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                    <a href="#" class="thumbnail">
+                        <img src="http://images5.fanpop.com/image/photos/30800000/-Random-random-30843841-1920-1080.jpg" alt="">
+                    </a>
+            </div>
+        </div>
 </template>
 
 <template name="loading">
