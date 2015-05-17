@@ -1,0 +1,25 @@
+<template name="menu">
+
+  <div id="start-game" class="">
+    <div  class="container">
+      <img id="np-logo" class="img-responsive" src="/Snake_Pit_Logo.png">
+      <form id="signup" class="text-center">
+        <div class="form-group {{errorClass 'playerName'}}">
+          <!-- <label for="player_name">Player Name:</label>  -->
+          <div id="usrname-input" class="input-group">
+            <span class="input-group-addon"><i class="glyphicon  glyphicon-user"></i></span>
+            <input class="signup__input form-control" type="text" id="player_name" name="player_name" placeholder="Let them know who's winning" value="{{currentPlayer.playerName}}">
+            <div class="input-group-btn">
+              <input type="submit" value="Play!" class="btn btn-default" />
+            </div>
+
+          </div>
+        </div>
+        <div>
+            <p class="error__message">{{errorMessage 'playerName'}}</p>
+        </div>
+      </form>  
+    </div>
+  </div>
+  
+</template>
