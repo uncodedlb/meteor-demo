@@ -4,17 +4,22 @@
       {{#if currentPlayer}}
         {{#if currentPlayer.dead}}
           <div>
-            <p>
-              {{gameMessage}}
-              <button id="play_again">Play</button>
-            </p>
+            <p>My Score: {{currentPlayer.score}}</p>
+          <!-- </div>
+          <div> -->
+            <p class="text-center">{{gameMessage}}</p>
+          <!-- </div>
+          <div> -->
+            <button class="btn btn-default" id="play_again">Play</button>
           </div>
-          <div>My Score: {{currentPlayer.score}}</div>
         {{/if}}
       {{/if}}
     </div>
 
     <div class="leaderboard">
+      <div id="expand-leaderboard">
+        <span class="fa fa-navicon"></span>
+      </div>
       <div class="leaderboard__wrap">
         <table class="leaderboard__current">
           <thead>
@@ -58,5 +63,6 @@
         </table>
       </div>
     </div>
+
   </div>
 </template>
