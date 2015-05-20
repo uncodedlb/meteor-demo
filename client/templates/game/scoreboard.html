@@ -21,10 +21,10 @@
         <span class="fa fa-navicon"></span>
       </div>
       <div class="leaderboard__wrap">
-        <table class="leaderboard__current">
+        <table class="leaderboard__current table">
           <thead>
             <tr>
-              <h2>Current Leaders</h2>
+              <h2 class="text-center">Current Leaders</h2>
             </tr>
             <tr>
               <th>Score</th>
@@ -33,17 +33,17 @@
           </thead>
           <tbody>
             {{#each leaders}}
-              <tr>
+              <tr class="green-hover">
                 <td>{{score}}</td>
                 <td>{{playerName}}</td>
               </tr>
             {{/each}}
           </tbody>
         </table>
-        <table class="leaderboard__halloffame">
+        <table class="leaderboard__halloffame table">
           <thead>
             <tr>
-              <h2>Hall Of Fame</h2>
+              <h2 class="text-center">Hall Of Fame</h2>
             </tr>
             <tr>
               <th>Rank</th>
@@ -53,7 +53,7 @@
           </thead>
           <tbody>
             {{#each hallOfFame}}
-              <tr>
+              <tr class="green-hover">
                 <td>{{rank}}</td>
                 <td>{{score}}</td>
                 <td>{{playerName}}</td>

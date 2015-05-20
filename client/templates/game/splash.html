@@ -1,8 +1,11 @@
 <template name="splash">
     {{> navbar}}
     <div  id="landing-main" class="">
-        <div id="landing-content" class="container min-height">
-            <img id="np-logo" class="img-responsive" src="/Snake_Pit_Logo.png">
+        <div id="landing-content" class="container">
+            <div class="snake-img-container">
+                <img id="np-logo" class="img-responsive" src="/Snake_Pit_Logo.png">
+                <img id="snake" src="/snake.png">
+            </div>
             <div id="cta-container" class="text-center">
                 <button id="cto-button" class="btn btn-lg">
                     <a href={{pathFor 'menu'}}>Join Game</a>
@@ -15,13 +18,13 @@
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 container-fa">
             <i class="center-fa fa fa-certificate"></i>
         </div>
-        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 align-vertical ">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 align-vertical ">
             <h3>43 Current High Score</h3>
         </div>
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 container-fa">
             <i class="center-fa fa fa-user"></i>
         </div>
-        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 align-vertical">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 align-vertical">
             <h3>43 Current Players</h3>
         </div>
     </div>

@@ -3,8 +3,10 @@ Template.splash.onRendered( function(){
     var windowHeight = $(window).height();
 
     if( windowHeight >= 800){
-      $("#landing-content").removeClass("min-height");
+      // $("#landing-content").removeClass("min-height");
       $("#landing-content").addClass("optional-height");
+    }else{
+      $("#landing-content").addClass("min-height");
     }
     console.log(windowHeight);
   };
