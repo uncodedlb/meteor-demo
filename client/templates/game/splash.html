@@ -1,0 +1,76 @@
+<template name="splash">
+    {{> navbar}}
+    <div  id="landing-main" class="">
+        <div id="landing-content" class="container">
+            <div class="snake-img-container">
+                <img id="np-logo" class="img-responsive" src="/Snake_Pit_Logo.png">
+                <img id="snake" src="/snake.png">
+            </div>
+            <div id="cta-container" class="text-center">
+                <button id="cto-button" class="btn btn-lg">
+                    <a href={{pathFor 'menu'}}>Join Game</a>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="leader-scores" class="container">
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 container-fa">
+            <i class="center-fa fa fa-certificate"></i>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 align-vertical ">
+            <h3>43 Current High Score</h3>
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 container-fa">
+            <i class="center-fa fa fa-user"></i>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 align-vertical">
+            <h3>43 Current Players</h3>
+        </div>
+    </div>
+    <main class="main-body">
+        <div class="container">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h2 class="text-center">How to play Snake Pit?</h2>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-centered">
+                <span class="fa-stack fa-lg center-fa">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                </span>
+                <h3 class="text-center">For Starters</h3>
+                <!-- </a> -->
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-centered">
+                <p class="text-center">The game is played with the arrow keys. Be careful not to run into any other snakes or yourself. The other snakes are colored <span style="color:red">red</span> and your food is colored <span style="color: blue;">blue</span>. Guide your snake to eat food while avoiding collisions. You may go through walls and find yourself on the opposite side of the pit. Also gain points by trapping other snakes and ending them.</p>
+            </div>
+        </div>
+        <div class="container">
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-centered">
+                <span class="fa-stack fa-lg center-fa">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-trophy fa-stack-1x fa-inverse"></i>
+                </span>
+                    <h3 class="text-center">Dominate!</h3>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-centered">
+                <p class="text-center">In the snake pit, you will be competing for your survival. Be quick as it becomes increasingly harder to continue the longer you survive. Dominate the other players by feeding your snake the most.</p>
+            </div>
+        </div>
+        <div class="container">
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-centered">
+                <span class="fa-stack fa-lg center-fa">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-star fa-stack-1x fa-inverse"></i>
+                </span>
+                <h3 class="text-center">Hall of Fame!</h3>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-centered">
+                <p class="text-center">Once it's all laid out on the field, only the most skillful players will rule the Hall of Fame. The ultimate arena is here!</p>
+            </div>
+        </div>
+    </main>
+</template>

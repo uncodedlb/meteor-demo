@@ -1,0 +1,29 @@
+<template name="game">
+  <div class="game-wrap">
+    <div class="board">
+      <div id="canvas-game">
+        <canvas id="js-game-board" width="500" height="500"></canvas>
+        <div>
+          <div class="container">
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+              <div id="player-scores">
+                <h4 class="text-right inline-display floated-right">Kills</h4>
+                <h4 class="text-left inline-display floated-left">Current Score</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      {{#unless isDesktop}}
+        Swipe the game board to control your snake
+      {{/unless}}
+
+      {{#if displayScoreboard}}
+        {{>scoreboard}}
+      {{/if}}
+    </div>
+  </div>
+</template>
+
