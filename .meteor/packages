@@ -16,3 +16,4 @@ less
 twbs:bootstrap
 fortawesome:fontawesome
 meteorhacks:kadira
+meteorhacks:fast-render
