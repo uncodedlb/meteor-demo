@@ -1,0 +1,68 @@
+<template name="scoreboard">
+  <div class="scoreboard-wrap">
+    <div class="score">
+      {{#if currentPlayer}}
+        {{#if currentPlayer.dead}}
+          <div>
+            <p>My Score: {{currentPlayer.score}}</p>
+          <!-- </div>
+          <div> -->
+            <p class="text-center">{{gameMessage}}</p>
+          <!-- </div>
+          <div> -->
+            <button class="btn btn-default" id="play_again">Play</button>
+          </div>
+        {{/if}}
+      {{/if}}
+    </div>
+
+    <div class="leaderboard">
+      <div id="expand-leaderboard">
+        <span class="fa fa-navicon"></span>
+      </div>
+      <div class="leaderboard__wrap">
+        <table class="leaderboard__current table">
+          <thead>
+            <tr>
+              <h2 class="text-center">Current Leaders</h2>
+            </tr>
+            <tr>
+              <th>Score</th>
+              <th>Player Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each leaders}}
+              <tr class="green-hover">
+                <td>{{score}}</td>
+                <td>{{playerName}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        <table class="leaderboard__halloffame table">
+          <thead>
+            <tr>
+              <h2 class="text-center">Hall Of Fame</h2>
+            </tr>
+            <tr>
+              <th>Rank</th>
+              <th>Score</th>
+              <th>Player Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each hallOfFame}}
+              <tr class="green-hover">
+                <td>{{rank}}</td>
+                <td>{{score}}</td>
+                <td>{{playerName}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</template>
