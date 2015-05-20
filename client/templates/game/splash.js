@@ -16,3 +16,13 @@ Template.splash.onRendered( function(){
   // });
 
 });
+
+Template.splash.helpers({
+  currentHighScore: function () {
+    var player = HallOfFame.findOne({}, { sort: { score: -1 }});
+    return player.score || 0;
+  },
+  totalPlayerCount: function () {
+    return Players.find({ dead: false }).count();
+  }
+});

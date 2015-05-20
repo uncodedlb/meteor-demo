@@ -215,8 +215,6 @@ Template.game.onRendered(function () {
     // lets paint the canvas now
     board.fillStyle = "white";
     board.fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
-    board.strokeStyle = "black";
-    board.strokeRect(0, 0, MAX_WIDTH, MAX_HEIGHT);
 
     // render the players
     _.each(Players.find({
@@ -357,7 +355,7 @@ Template.game.onRendered(function () {
   }
 
   function paintFoodCell(x, y) {
-    board.fillStyle = "green";
+    board.fillStyle = "blue";
     board.fillRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
     board.strokeText = "white";
     board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH,
@@ -373,7 +371,7 @@ Template.game.onRendered(function () {
   }
 
   function paintCell(x, y) {
-    board.fillStyle = "blue";
+    board.fillStyle = "green";
     board.fillRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH, CELL_WIDTH);
     board.strokeText = "white";
     board.strokeRect(x * CELL_WIDTH, y * CELL_WIDTH, CELL_WIDTH,
