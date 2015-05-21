@@ -2,6 +2,7 @@
 
 Template.menu.onCreated(function () {
   Session.set('menuSubmitErrors', {});
+
   var existingPlayer = Players.findOne({ userId: Meteor.userId() });
   if (existingPlayer)
     Session.set('currentPlayer', existingPlayer._id);

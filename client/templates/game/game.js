@@ -121,6 +121,7 @@ Template.game.onCreated(function () {
 
   // make sure we always have a player to start with
   if (!Players.findOne(Session.get('currentPlayer'))) {
+    Session.set('currentPlayer', '');
     Router.go('menu');
     return;
   }
