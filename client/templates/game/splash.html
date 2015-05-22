@@ -7,25 +7,23 @@
                 <img id="snake" src="/snake.png">
             </div>
             <div id="cta-container" class="text-center">
-                <button id="cto-button" class="btn btn-lg">
-                    <a href={{pathFor 'menu'}}>Join Game</a>
-                </button>
+                <a id="cto-button" class="btn btn-lg" href={{pathFor 'menu'}}>Join Game</a>
             </div>
         </div>
     </div>
-    
+
     <div id="leader-scores" class="container">
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 container-fa">
             <i class="center-fa fa fa-certificate"></i>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 align-vertical ">
-            <h3>43 Current High Score</h3>
+            <h3>{{currentHighScore}} Current High Score</h3>
         </div>
         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 container-fa">
             <i class="center-fa fa fa-user"></i>
         </div>
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 align-vertical">
-            <h3>43 Current Players</h3>
+            <h3>{{totalPlayerCount}} Current Players</h3>
         </div>
     </div>
     <main class="main-body">
