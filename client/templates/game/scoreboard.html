@@ -27,15 +27,17 @@
               <h2 class="text-center">Current Leaders</h2>
             </tr>
             <tr>
-              <th>Score</th>
               <th>Player Name</th>
+              <th>Score</th>
+              <th>Kills</th>
             </tr>
           </thead>
           <tbody>
             {{#each leaders}}
               <tr class="green-hover">
-                <td>{{score}}</td>
                 <td>{{playerName}}</td>
+                <td>{{score}}</td>
+                <td>{{kills}}</td>
               </tr>
             {{/each}}
           </tbody>
@@ -47,16 +49,18 @@
             </tr>
             <tr>
               <th>Rank</th>
-              <th>Score</th>
               <th>Player Name</th>
+              <th>Score</th>
+              <th>Kills</th>
             </tr>
           </thead>
           <tbody>
             {{#each hallOfFame}}
               <tr class="green-hover">
                 <td>{{rank}}</td>
-                <td>{{score}}</td>
                 <td>{{playerName}}</td>
+                <td>{{score}}</td>
+                <td>{{kills}}</td>
               </tr>
             {{/each}}
           </tbody>

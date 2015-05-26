@@ -7,14 +7,14 @@
           <div class="container">
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
               <div id="player-scores">
-                <h4 class="text-right inline-display floated-right">Kills</h4>
-                <h4 class="text-left inline-display floated-left">Current Score</h4>
+                <h4 class="text-right inline-display floated-right">Kills {{currentPlayer.kills}}</h4>
+                <h4 class="text-left inline-display floated-left">Current Score {{currentPlayer.score}}</h4>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
+
 
       {{#unless isDesktop}}
         Swipe the game board to control your snake
