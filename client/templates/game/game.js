@@ -158,7 +158,7 @@ Template.game.onRendered(function () {
 
     board = self.find('canvas').getContext('2d');
     if (!_.isUndefined(gameLoop)) clearInterval(gameLoop);
-    gameLoop = setInterval(paint, 60);
+    gameLoop = setInterval(paint, 75);
 
   }
 
